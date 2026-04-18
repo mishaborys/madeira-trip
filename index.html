@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мадейра — травень 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f6f3;
+      --bg3: #f0efe9;
+      --text: #1a1a1a;
+      --text2: #6b6b6b;
+      --text3: #9b9b9b;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --teal-bg: #E1F5EE;
+      --teal-text: #0F6E56;
+      --purple-bg: #EEEDFE;
+      --purple-text: #534AB7;
+      --amber-bg: #FAEEDA;
+      --amber-text: #633806;
+      --blue-bg: #E6F1FB;
+      --blue-text: #185FA5;
+      --gray-bg: #F1EFE8;
+      --gray-text: #5F5E5A;
+      --red-bg: #FCEBEB;
+      --red-text: #A32D2D;
+      --green-bg: #E1F5EE;
+      --green-text: #0F6E56;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --bg2: #242424;
+        --bg3: #2e2e2e;
+        --text: #f0ede8;
+        --text2: #a0a0a0;
+        --text3: #6a6a6a;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+        --teal-bg: #0a3328;
+        --teal-text: #5DCAA5;
+        --purple-bg: #1e1a4a;
+        --purple-text: #AFA9EC;
+        --amber-bg: #2a1e08;
+        --amber-text: #FAC775;
+        --blue-bg: #0a1e35;
+        --blue-text: #85B7EB;
+        --gray-bg: #2a2a28;
+        --gray-text: #B4B2A9;
+        --red-bg: #2a0a0a;
+        --red-text: #F09595;
+        --green-bg: #0a2a1e;
+        --green-text: #5DCAA5;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg3);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    .site-header {
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .header-title { font-size: 17px; font-weight: 600; color: var(--text); }
+    .header-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
+    .header-flag { font-size: 24px; }
+
+    /* TABS */
+    .tabs-bar {
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 69px;
+      z-index: 99;
+    }
+    .tabs-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-inner::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      font-size: 13px;
+      font-weight: 500;
+      padding: 14px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
+
+    /* CONTENT */
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* DAY CARDS */
+    .day-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .day-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.1s;
+    }
+    .day-header:hover { background: var(--bg2); }
+    .day-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .day-info { flex: 1; min-width: 0; }
+    .day-info h3 { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .day-info p { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    .day-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .score { font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
+    .chevron { font-size: 11px; color: var(--text3); transition: transform 0.2s; }
+    .day-card.open .chevron { transform: rotate(180deg); }
+
+    /* DAY BODY */
+    .day-body { display: none; padding: 0 1.25rem 1.25rem; border-top: 0.5px solid var(--border); }
+    .day-card.open .day-body { display: block; }
+
+    /* TIMELINE SLOTS */
+    .slot { display: flex; gap: 12px; margin-top: 14px; }
+    .slot-time { min-width: 52px; padding-top: 1px; }
+    .slot-time span { font-size: 12px; font-weight: 600; color: var(--text2); }
+    .slot-line { display: flex; flex-direction: column; align-items: center; padding-top: 5px; }
+    .slot-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+    .slot-bar { width: 1px; background: var(--border); flex: 1; margin-top: 4px; }
+    .slot:last-child .slot-bar { display: none; }
+    .slot-content { flex: 1; padding-bottom: 4px; }
+    .slot-content h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .slot-content p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+    /* BADGES */
+    .tip { font-size: 12px; color: var(--teal-text); background: var(--teal-bg); border-radius: var(--radius-sm); padding: 4px 9px; margin-top: 5px; display: inline-block; line-height: 1.4; }
+    .warn { font-size: 12px; color: var(--amber-text); background: var(--amber-bg); border-radius: var(--radius-sm); padding: 4px 9px; margin-top: 5px; display: inline-block; line-height: 1.4; }
+
+    /* RESTAURANTS */
+    .rest-box { margin-top: 8px; background: var(--bg2); border-radius: var(--radius-sm); padding: 10px 12px; }
+    .rest-box p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .rest-box strong { color: var(--text); font-weight: 600; }
+
+    /* BOOKING TAB */
+    .book-item {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 10px;
+    }
+    .book-item.high { border-left: 3px solid #E24B4A; }
+    .book-item.med { border-left: 3px solid #EF9F27; }
+    .book-item.low { border-left: 3px solid #1D9E75; }
+    .book-item h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .book-item p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .book-item a { color: #378ADD; text-decoration: none; font-weight: 500; }
+    .book-item a:hover { text-decoration: underline; }
+    .pill {
+      font-size: 11px; font-weight: 600; padding: 2px 9px;
+      border-radius: 20px; display: inline-block; margin-bottom: 8px;
+    }
+    .section-note { font-size: 13px; color: var(--text2); margin-bottom: 14px; line-height: 1.5; }
+
+    /* PACKING TAB */
+    .progress-wrap { margin-bottom: 20px; }
+    .progress-label { font-size: 13px; color: var(--text2); margin-bottom: 6px; }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #1D9E75; border-radius: 2px; transition: width 0.3s; }
+    .pack-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 10px;
+    }
+    .pack-card h4 {
+      font-size: 13px; font-weight: 600; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 10px; padding-bottom: 8px;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0; }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 7px 0; border-bottom: 0.5px solid var(--border);
+      cursor: pointer; user-select: none;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .check-item input[type=checkbox] {
+      width: 16px; height: 16px; margin-top: 1px;
+      flex-shrink: 0; cursor: pointer;
+      accent-color: #1D9E75;
+    }
+    .check-item label { font-size: 13px; color: var(--text); cursor: pointer; line-height: 1.4; }
+    .check-item.done label { color: var(--text3); text-decoration: line-through; }
+
+    /* TIPS TAB */
+    .tip-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 8px;
+      font-size: 13px; color: var(--text2); line-height: 1.6;
+    }
+    .tip-card strong { color: var(--text); font-weight: 600; }
+
+    /* FOOD TAB */
+    .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+    .food-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .food-card h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .food-card p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+    .food-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 6px; }
+    .rest-list { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
+    .rest-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .rest-row:last-child { border-bottom: none; }
+    .rest-row .emoji { font-size: 20px; flex-shrink: 0; }
+    .rest-row strong { font-size: 14px; font-weight: 600; color: var(--text); display: block; }
+    .rest-row p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+    /* BEACHES SECTION */
+    .beach-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+    .beach-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .beach-card h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .beach-card p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+    .section-heading {
+      font-size: 12px; font-weight: 600; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin: 20px 0 10px;
+    }
+
+    @media (max-width: 480px) {
+      .content { padding: 1rem; }
+      .day-info h3 { font-size: 14px; }
+      .check-grid { grid-template-columns: 1fr; }
+      .food-grid { grid-template-columns: 1fr; }
+      .beach-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">Мадейра 🌿</div>
+      <div class="header-sub">7–17 травня 2026 · Ribeira Brava</div>
+    </div>
+    <div class="header-flag">🇵🇹</div>
+  </div>
+</header>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="switchTab('plan',this)">План по днях</button>
+    <button class="tab-btn" onclick="switchTab('food',this)">Їжа</button>
+    <button class="tab-btn" onclick="switchTab('book',this)">Бронювання</button>
+    <button class="tab-btn" onclick="switchTab('pack',this)">Що взяти</button>
+    <button class="tab-btn" onclick="switchTab('tips',this)">Поради</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ===== ПЛАН ===== -->
+<div id="pane-plan" class="tab-pane active">
+  <p class="section-note">Натисніть на день, щоб розгорнути погодинний розклад.</p>
+
+  <!-- ДЕНЬ 1 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--gray-bg);color:var(--gray-text);">7/5</div>
+      <div class="day-info"><h3>День 1 — Прибуття і Ribeira Brava</h3><p>Четвер · приліт ~16:00</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--gray-bg);color:var(--gray-text);">6/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>16:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Приліт, митниця, забір авто</h4><p>Аеропорт Funchal. Заберіть авто на стійці оренди — ~30-40 хв з урахуванням черги і оформлення.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>17:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Дорога до Ribeira Brava</h4><p>~25 хв по автостраді ER101. Заселення, відпочинок, свіжий душ.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>18:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Igreja de São Bento + набережна</h4><p>Церква XVI ст. — 20-30 хв. Прогулянка прибережним прогулянком і форт São Bento — ще ~30 хв.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>20:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Вечеря</h4><div class="rest-box"><p><strong>1. Restaurante O Moio</strong> — на набережній, свіжа риба, polvo grelhado, espada.<br><strong>2. Tasca do Peixe</strong> — традиційна кухня, менш туристичне, гарне bolo do caco.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 2 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--teal-bg);color:var(--teal-text);">8/5</div>
+      <div class="day-info"><h3>День 2 — Funchal</h3><p>П'ятниця · повний день у столиці</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--teal-bg);color:var(--teal-text);">9/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>08:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Виїзд до Funchal</h4><p>~25 хв по автостраді.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>09:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Mercado dos Lavradores</h4><p>Ринок квітів, фруктів, риби. ~1-1.5 год. Спробуйте анону, маракую, місцеві банани. Прибувайте до 10:00.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>10:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Sé Cathedral + Rua de Santa Maria</h4><p>Собор XV ст. — ~20 хв. Вулиця розписаних дверей — ~40 хв прогулянки.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>12:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід</h4><div class="rest-box"><p><strong>1. A Traineira</strong> — свіжа риба, популярне у місцевих, поруч зі Старим містом.<br><strong>2. Café do Museu</strong> — кафе при музеї, легкий обід, затишна атмосфера.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>14:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Канатна дорога Monte + сади</h4><p>Підйом ~15 хв. Monte Palace Tropical Garden — ~1.5 год. Орхідеї, азалії, азійська колекція.<br><span class="tip">Квитки купити онлайн — telefericofunchal.com</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>16:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Monte Toboggan — спуск на кошику</h4><p>~15 хв вниз по вуличках. Черга ~20-30 хв. ~30-35€ на двох.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>17:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Blandy's Wine Lodge — дегустація</h4><p>~1 год. Sercial (сухе), Malmsey (солодке).<br><span class="tip">Бронювати заздалегідь — blandyswinelodge.com</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>19:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Вечеря і повернення (~22:00)</h4><div class="rest-box"><p><strong>1. Lá ao Fundo</strong> — афро-мадейрський фьюжн, тунець і меч-риба. Бронювати!<br><strong>2. O Tapassol</strong> — тапас, вино Мадейри, жива музика у вихідні.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 3 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--purple-bg);color:var(--purple-text);">9/5</div>
+      <div class="day-info"><h3>День 3 — Cabo Girão, Câmara de Lobos, Ponta do Sol</h3><p>Субота · без трекінгу · культура і краєвид</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--purple-bg);color:var(--purple-text);">8/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>09:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Cabo Girão Skywalk</h4><p>~20 хв від Ribeira Brava. Скляний помост 580 м над морем. ~45 хв з оглядом і фото.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>10:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Câmara de Lobos</h4><p>Рибальське селище, де Churchill малював. Набережна, кольорові човни, бугенвілеї. ~1.5 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>12:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід</h4><div class="rest-box"><p><strong>1. Adega da Quinta</strong> — найкраща espetada на острові з 1966. Обов'язково бронювати!<br><strong>2. Restaurante Coral</strong> — бюджетніший варіант в Câmara de Lobos, свіжа риба і poncha.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>14:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Ponta do Sol + пляж Praia de Ponta do Sol</h4><p>~10 хв від Ribeira Brava. Найсонячніше містечко. Набережна + прогулянка босяком по галькові. ~1.5 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>16:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Fajã dos Padres (якщо заброньовано)</h4><p>~15 хв. Канатна дорога до тропічного саду на кліфах. ~1.5-2 год.<br><span class="tip">Потрібне бронювання — fajadospadres.com</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>19:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Вечеря</h4><div class="rest-box"><p><strong>1. Encumeada Restaurant</strong> — через перевал додому, espetada і гірська кухня.<br><strong>2. Будь-який ресторан у Ribeira Brava</strong> — якщо не хочеться їхати через гори.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 4 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--amber-bg);color:var(--amber-text);">10/5</div>
+      <div class="day-info"><h3>День 4 — Трекінг #1: Levada das 25 Fontes</h3><p>Неділя · PR6 · Rabaçal · легкий рівень</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--amber-bg);color:var(--amber-text);">10/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>07:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Виїзд з Ribeira Brava</h4><p>~40 хв до паркінгу Rabaçal. Беріть воду, перекус, дощовик.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>08:15</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Старт PR6 — Levada das 25 Fontes</h4><p>8.6 км туди-назад, ~3-4 год. Майже плоска левада через лавровий ліс. Водоспад Risco (30 м) + озерце 25 джерел.<br><span class="tip">Телефон для освітлення тунелів — достатньо, вони короткі</span><br><span class="warn">Бронювати слот заздалегідь — visitmadeira.com (~4.50€/особу)</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>12:15</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Завершення трекінгу + перекус</h4><p>Їжте що взяли з собою, є кілька лавок біля паркінгу.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>13:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Paul da Serra — плато</h4><p>~15 хв від Rabaçal. Відкрите плато 1400 м — вітряки, туман, несподіваний пейзаж. ~30 хв.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>15:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід / рання вечеря</h4><div class="rest-box"><p><strong>1. Restaurante Encumeada</strong> — ~20 хв від Paul da Serra, espetada і місцевий суп після хайку.<br><strong>2. Adega da Vila</strong> — в Serra de Água по дорозі, гірська традиційна кухня.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>17:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Повернення до Ribeira Brava</h4><p>~30-40 хв через Encumeada. Ввечері відпочинок.</p></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 5 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--teal-bg);color:var(--teal-text);">11/5</div>
+      <div class="day-info"><h3>День 5 — Північне узбережжя і пляж Seixal</h3><p>Понеділок · Porto Moniz · Seixal · São Vicente</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--teal-bg);color:var(--teal-text);">9/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>08:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Виїзд через Paul da Serra</h4><p>~55 хв до Porto Moniz. Видовищна траса через плато.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>09:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Porto Moniz — природні лавові басейни</h4><p>~1.5 год. Базальтові басейни з океанічною водою. Прогулянка вздовж скель і фото.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>11:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід у Porto Moniz</h4><div class="rest-box"><p><strong>1. Orca Natural Pools Restaurant</strong> — прямо біля басейнів, свіжа риба з видом на лаву.<br><strong>2. Restaurante Cachalote</strong> — поруч, морепродукти, популярне у місцевих.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>13:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Прибережна дорога → Praia de Seixal</h4><p>Дорога з водоспадами на асфальті. Чорний вулканічний пісок, скелі, дикий вигляд. Прогулянка босяком по кромці води. ~1 год.<br><span class="tip">Вода ~19°С — свіжо, але деякі заходять</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>15:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Véu da Noiva — водоспад Bridal Veil</h4><p>Водоспад прямо в море. Оглядовий майданчик біля дороги, ~15-20 хв зупинка.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>15:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>São Vicente — лавові печери</h4><p>~1 год підземного маршруту ~1 км. Температура в печерах ~18°С. ~8€.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>17:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Повернення + вечеря</h4><div class="rest-box"><p><strong>1. Restaurante O Forno</strong> — в Ribeira Brava, bolo do caco і grelhados.<br><strong>2. Snack Bar Relvinha</strong> — просто, по-місцевому, на набережній.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 6 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--purple-bg);color:var(--purple-text);">12/5</div>
+      <div class="day-info"><h3>День 6 — Santana і Fanal</h3><p>Вівторок · зачарований ліс · традиційні будиночки</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--purple-bg);color:var(--purple-text);">8/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>07:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Виїзд на Fanal</h4><p>~55 хв через Paul da Serra.<br><span class="tip">Виїжджати рано — туман до 10:00, потім приїжджають автобуси з туристами</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>08:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Fanal — зачарований ліс</h4><p>Стародавні лаврові дерева 800+ років у тумані. Коротка прогулянка ~1-2 км, ~1.5 год. Нереальна атмосфера.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>10:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Дорога до Santana через північ</h4><p>~1 год зі зупинками на видових точках уздовж узбережжя.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>12:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Santana — традиційні будиночки</h4><p>Іконічні трикутні кольорові будиночки. Центр + відкритий музей. ~1-1.5 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>13:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід</h4><div class="rest-box"><p><strong>1. Quinta do Furão</strong> — тераса з видом на океан, традиційна кухня, одне з кращих у регіоні.<br><strong>2. O Colmo</strong> — ресторан у будиночку з солом'яним дахом, espetada і місцеве вино.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>15:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Queimadas Forest Park</h4><p>Казковий лавровий парк з азаліями і качками. ~45 хв тихої прогулянки.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>17:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Повернення до Ribeira Brava</h4><p>~50 хв через центр острова.</p></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 7 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--amber-bg);color:var(--amber-text);">13/5</div>
+      <div class="day-info"><h3>День 7 — Трекінг #2: Levada do Furado → Balcões</h3><p>Середа · Ribeiro Frio · ~5-6 км · легкий рівень</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--amber-bg);color:var(--amber-text);">9/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>08:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Виїзд до Ribeiro Frio</h4><p>~45 хв від Ribeira Brava через центр острова.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>09:15</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Старт Levada do Furado → Balcões</h4><p>~5-6 км туди-назад, ~2.5-3 год. Рівна левада вздовж лаврового лісу. Фінал — оглядовий майданчик з видом на Pico Ruivo і Pico do Arieiro.<br><span class="tip">Мінімальний перепад висот — ідеально для коліна</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>12:15</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід у Ribeiro Frio</h4><div class="rest-box"><p><strong>1. Restaurante Ribeiro Frio</strong> — форель з місцевої ферми, традиційні страви.<br><strong>2. Victor's Bar</strong> — простіший варіант, бутерброди і суп після хайку.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>14:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Miradouro da Portela</h4><p>~15 хв. Один з найкращих видів на північ острова. ~30 хв.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>15:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Curral das Freiras — Долина Монахинь</h4><p>~35 хв. Ізольоване селище в кратері. Спуск серпантином, вид з Eira do Serrado. ~1 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>17:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Вечеря і повернення (~19:30)</h4><div class="rest-box"><p><strong>1. Nun's Valley Restaurant</strong> — суп з каштанів і місцеве вино в Curral das Freiras.<br><strong>2. Restaurante Serra e Mar</strong> — на виїзді з долини, простіший варіант.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 8 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--blue-bg);color:var(--blue-text);">14/5</div>
+      <div class="day-info"><h3>День 8 — Відпочинок, вино і пляж Calheta</h3><p>Четвер · Funchal · золотий пісок · релакс</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--blue-bg);color:var(--blue-text);">8/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>10:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Ponta do Pargo — маяк заходу (опціонально)</h4><p>Крайній захід острова, маяк і скелі. ~30 хв від Ribeira Brava. Ранкова поїздка перед пляжем.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>11:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Praia de Calheta — золотий пісок</h4><p>~20 хв від Ribeira Brava. Єдиний пляж із завезеним марокканським піском — найзатишніший на острові. Прогулянка по воді, відпочинок. ~1.5-2 год.<br><span class="tip">Захищена бухта — найспокійніша вода на острові</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>13:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід</h4><div class="rest-box"><p><strong>1. Armazém do Sal</strong> — Funchal, колишній склад солі, елегантна атмосфера і морепродукти.<br><strong>2. O Jango</strong> — свіжа риба у Funchal, популярне місце.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>15:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Funchal Old Town — шопінг і прогулянка</h4><p>Мадейрська вишивка, poncha у пляшці, bolo de mel, вино — сувеніри. ~1.5 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>17:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Захід сонця — Miradouro das Neves або Pico dos Barcelos</h4><p>~10 хв від центру Funchal. Вид на місто і порт у золотому світлі.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>19:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Вечеря</h4><div class="rest-box"><p><strong>1. Lá ao Fundo</strong> — якщо не були в День 2, обов'язково сюди.<br><strong>2. Restaurante Do Forte</strong> — біля форту в Old Town, хороша риба і вино.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 9 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--amber-bg);color:var(--amber-text);">15/5</div>
+      <div class="day-info"><h3>День 9 — Схід сонця + схід острова + Prainha</h3><p>П'ятниця · Pico do Arieiro · Machico · чорний пісок</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--amber-bg);color:var(--amber-text);">10/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>05:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Підйом і виїзд на Pico do Arieiro</h4><p>~55 хв від Ribeira Brava до вершини (1818 м).<br><span class="warn">Дуже холодно — +5-8°С. Термокуртка, рукавиці, бафф обов'язково!</span></p></div></div>
+      <div class="slot"><div class="slot-time"><span>06:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>🌅 Схід сонця на Pico do Arieiro</h4><p>Схід ~6:15 у травні. Вид над хмарами — одне з найкращих вражень Мадейри. Перші 1-1.5 км маршруту і назад — ~1.5 год без важкого підйому.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>08:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Сніданок і зігріватися</h4><div class="rest-box"><p><strong>1. Restaurante Pico do Arieiro</strong> — кафе на вершині, кава і круасан після сходу.<br><strong>2. Café em Poiso</strong> — ~10 хв вниз, затишне місце з каміном.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>10:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Machico</h4><p>~40 хв від Pico. Перше поселення острова — капела Milagres (XV ст.), набережна. ~1.5 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>12:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід у Machico</h4><div class="rest-box"><p><strong>1. Restaurante Mercado Velho</strong> — в будівлі старого ринку, хороша риба і морепродукти.<br><strong>2. O Mané</strong> — улюблене у місцевих, espada і polvo.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>14:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Prainha — єдиний природний пляж з чорним піском</h4><p>~20 хв від Machico. Невеликий затишний пляж, оточений скелями. Вулканічний чорний пісок. Прогулянка босяком по кромці. ~1.5 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>16:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Повернення + вечеря</h4><div class="rest-box"><p><strong>1. Tasca da Ponte</strong> — в Ribeira Brava, рибальська кухня, свіже і недорого.<br><strong>2. Restaurante O Moio</strong> — улюблений на набережній.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 10 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--purple-bg);color:var(--purple-text);">16/5</div>
+      <div class="day-info"><h3>День 10 — Повільний день і прощання</h3><p>Субота · Ribeira Brava · околиці</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--purple-bg);color:var(--purple-text);">7/10</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>09:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Ранкова прогулянка Ribeira Brava</h4><p>Ринок, набережна, кава. Без поспіху.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>11:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Calhau da Lapa або Campanário</h4><p>~15 хв. Тиха бухта без туристів — рибалки, спокійна вода, прогулянка по каменях. ~2 год.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>13:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід</h4><div class="rest-box"><p><strong>1. Restaurante O Moio</strong> — набережна, якщо ще не були.<br><strong>2. Taberna da Ponte</strong> — тераса над річкою, дуже місцева атмосфера.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>15:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Сувеніри і пакування</h4><p>Мадейрська вишивка, poncha у пляшці, bolo de mel, вино Madeira.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>19:30</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Прощальна вечеря</h4><div class="rest-box"><p><strong>1. Encumeada Restaurant</strong> — espetada і poncha з видом на гори.<br><strong>2. Найулюбленіший ресторан поїздки</strong> — повернутися і попрощатися.</p></div></div></div>
+    </div>
+  </div>
+
+  <!-- ДЕНЬ 11 -->
+  <div class="day-card" onclick="toggle(this)">
+    <div class="day-header">
+      <div class="day-dot" style="background:var(--gray-bg);color:var(--gray-text);">17/5</div>
+      <div class="day-info"><h3>День 11 — Від'їзд</h3><p>Неділя · виліт ~16:00</p></div>
+      <div class="day-meta"><span class="score" style="background:var(--gray-bg);color:var(--gray-text);">—</span><span class="chevron">▼</span></div>
+    </div>
+    <div class="day-body">
+      <div class="slot"><div class="slot-time"><span>09:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Ранкова кава і набережна</h4><p>Останній ранок у своєму темпі.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>11:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Здача авто і виїзд в аеропорт</h4><p>Здати авто до 13:00. Аеропорт ~25 хв від Ribeira Brava. Реєстрація мінімум о 14:00.</p></div></div>
+      <div class="slot"><div class="slot-time"><span>13:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Обід</h4><div class="rest-box"><p><strong>1. Restaurante Solar dos Prazeres</strong> — ~10 хв від аеропорту, традиційна кухня.<br><strong>2. Кафе в аеропорту</strong> — bolo do caco і espresso на прощання.</p></div></div></div>
+      <div class="slot"><div class="slot-time"><span>16:00</span></div><div class="slot-line"><div class="slot-dot"></div><div class="slot-bar"></div></div><div class="slot-content"><h4>Виліт ✈️</h4><p>До побачення, Мадейро!</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ЇЖА ===== -->
+<div id="pane-food" class="tab-pane">
+  <p class="section-heading">Страви, яких не можна пропустити</p>
+  <div class="food-grid">
+    <div class="food-card"><span class="food-tag" style="background:var(--amber-bg);color:var(--amber-text);">М'ясо</span><h4>Espetada</h4><p>Яловичина на лаврових шпалах — символ Мадейри. Найкраще в Câmara de Lobos.</p></div>
+    <div class="food-card"><span class="food-tag" style="background:var(--blue-bg);color:var(--blue-text);">Риба</span><h4>Espada (чорна риба-меч)</h4><p>Глибоководна риба, ловиться тільки тут. Смачна з бананом або масляним соусом.</p></div>
+    <div class="food-card"><span class="food-tag" style="background:var(--teal-bg);color:var(--teal-text);">Хліб</span><h4>Bolo do caco</h4><p>Круглий хлібець із солодкої картоплі. Замовляйте як гарнір до кожної страви.</p></div>
+    <div class="food-card"><span class="food-tag" style="background:var(--blue-bg);color:var(--blue-text);">Риба</span><h4>Polvo (осьминіг)</h4><p>Смажений осьминіг або в оливковій олії. Чудово в будь-якому морському ресторані.</p></div>
+    <div class="food-card"><span class="food-tag" style="background:var(--amber-bg);color:var(--amber-text);">М'ясо</span><h4>Carne de vinha d'alhos</h4><p>М'ясо, мариноване у вині і часнику — прадавній рецепт острова.</p></div>
+    <div class="food-card"><span class="food-tag" style="background:var(--teal-bg);color:var(--teal-text);">Десерт</span><h4>Bolo de mel</h4><p>Темний пряний пиріг із цукрової тростини. Густий, ароматний.</p></div>
+    <div class="food-card"><span class="food-tag" style="background:var(--purple-bg);color:var(--purple-text);">Напій</span><h4>Poncha</h4><p>Aguardente + лимон + цукор. Класика в Câmara de Lobos. Міцна!</p></div>
+    <div class="food-card"><span class="food-tag" style="background:var(--purple-bg);color:var(--purple-text);">Напій</span><h4>Вино Madeira</h4><p>Унікальне окислене вино. Sercial — сухе, Malmsey — солодке. Дегустація у Blandy's.</p></div>
+  </div>
+
+  <p class="section-heading">Пляжі</p>
+  <div class="beach-cards">
+    <div class="beach-card"><span class="food-tag" style="background:var(--amber-bg);color:var(--amber-text);">День 8</span><h4>🏖 Praia de Calheta</h4><p>Золотий пісок (завезений з Марокко). Захищена бухта, найспокійніша вода. Єдиний такий пляж на острові.</p></div>
+    <div class="beach-card"><span class="food-tag" style="background:var(--teal-bg);color:var(--teal-text);">День 5</span><h4>⚫ Praia de Seixal</h4><p>Чорний вулканічний пісок, скелі, дикий вигляд. Північ острова, поруч з дорогою водоспадів.</p></div>
+    <div class="beach-card"><span class="food-tag" style="background:var(--purple-bg);color:var(--purple-text);">День 9</span><h4>⚫ Prainha</h4><p>Єдиний природний пляж острова з чорним піском. Затишний, оточений скелями. Схід острова.</p></div>
+    <div class="beach-card"><span class="food-tag" style="background:var(--blue-bg);color:var(--blue-text);">День 3</span><h4>🌊 Praia de Ponta do Sol</h4><p>Галькова пляж під скелями. Романтична набережна, босяком по кромці води.</p></div>
+  </div>
+
+  <p class="section-heading">Топ ресторани</p>
+  <div class="rest-list">
+    <div class="rest-row"><span class="emoji">🥩</span><div><strong>Adega da Quinta</strong> — Câmara de Lobos<p>Найкраща espetada на острові, з 1966. Бронювати обов'язково!</p></div></div>
+    <div class="rest-row"><span class="emoji">🐟</span><div><strong>A Traineira</strong> — Funchal<p>Свіжа риба і морепродукти. Популярне у місцевих.</p></div></div>
+    <div class="rest-row"><span class="emoji">🌍</span><div><strong>Lá ao Fundo</strong> — Funchal<p>Афро-мадейрський фьюжн, тунець і меч-риба. Бронювати!</p></div></div>
+    <div class="rest-row"><span class="emoji">🧂</span><div><strong>Armazém do Sal</strong> — Funchal<p>Колишній склад солі, елегантна атмосфера.</p></div></div>
+    <div class="rest-row"><span class="emoji">⛰️</span><div><strong>Restaurante Encumeada</strong> — перевал Encumeada<p>Традиційна кухня після трекінгу, вид на гори.</p></div></div>
+    <div class="rest-row"><span class="emoji">🌊</span><div><strong>Quinta do Furão</strong> — Santana<p>Тераса з видом на океан, одне з кращих у регіоні.</p></div></div>
+    <div class="rest-row"><span class="emoji">🏔️</span><div><strong>Nun's Valley Restaurant</strong> — Curral das Freiras<p>Суп з каштанів і місцеве вино в Долині Монахинь.</p></div></div>
+    <div class="rest-row"><span class="emoji">🐟</span><div><strong>Orca Natural Pools Restaurant</strong> — Porto Moniz<p>Риба з видом на лавові басейни.</p></div></div>
+  </div>
+</div>
+
+<!-- ===== БРОНЮВАННЯ ===== -->
+<div id="pane-book" class="tab-pane">
+  <p class="section-note">Червона межа — обов'язково до поїздки. Жовта — бажано. Зелена — можна на місці.</p>
+
+  <div class="book-item high">
+    <span class="pill" style="background:var(--red-bg);color:var(--red-text);">Обов'язково</span>
+    <h4>Трейл PR6 — Levada das 25 Fontes (День 4)</h4>
+    <p>З 2026 — обов'язкове бронювання слоту + ~4.50€/особу.<br>Сайт: <a href="https://visitmadeira.com" target="_blank">visitmadeira.com</a> → Hiking reservations.<br>Бронювати за 2–3 тижні до поїздки.</p>
+  </div>
+  <div class="book-item high">
+    <span class="pill" style="background:var(--red-bg);color:var(--red-text);">Обов'язково</span>
+    <h4>Adega da Quinta — ресторан (День 3)</h4>
+    <p>Найпопулярніший ресторан для espetada. Субота — особливо важливо бронювати.<br>Телефон: +351 291 942 562 або TripAdvisor.<br>Бронювати за 1–2 тижні.</p>
+  </div>
+  <div class="book-item high">
+    <span class="pill" style="background:var(--red-bg);color:var(--red-text);">Обов'язково</span>
+    <h4>Lá ao Fundo — ресторан (День 2 або День 8)</h4>
+    <p>Маленький ресторан, швидко заповнюється.<br>Google Maps або TheFork.<br>Бронювати за 1 тиждень.</p>
+  </div>
+  <div class="book-item med">
+    <span class="pill" style="background:var(--amber-bg);color:var(--amber-text);">Бажано</span>
+    <h4>Канатна дорога Monte — квитки (День 2)</h4>
+    <p>Можна купити на місці, але черга 30–45 хв у пік.<br>Сайт: <a href="https://telefericofunchal.com" target="_blank">telefericofunchal.com</a></p>
+  </div>
+  <div class="book-item med">
+    <span class="pill" style="background:var(--amber-bg);color:var(--amber-text);">Бажано</span>
+    <h4>Blandy's Wine Lodge — тур (День 2)</h4>
+    <p>Тури по часах, краще забронювати конкретний час.<br>Сайт: <a href="https://blandyswinelodge.com" target="_blank">blandyswinelodge.com</a></p>
+  </div>
+  <div class="book-item med">
+    <span class="pill" style="background:var(--amber-bg);color:var(--amber-text);">Бажано</span>
+    <h4>Fajã dos Padres — канатна дорога (День 3)</h4>
+    <p>Невелика місткість, не щодня відкрито.<br>Сайт: <a href="https://fajadospadres.com" target="_blank">fajadospadres.com</a></p>
+  </div>
+  <div class="book-item med">
+    <span class="pill" style="background:var(--amber-bg);color:var(--amber-text);">Бажано</span>
+    <h4>Quinta do Furão — ресторан (День 6)</h4>
+    <p>Популярний ресторан з терасою в Santana.<br>TripAdvisor або сайт готелю. За 1-2 дні.</p>
+  </div>
+  <div class="book-item low">
+    <span class="pill" style="background:var(--green-bg);color:var(--green-text);">На місці ок</span>
+    <h4>São Vicente Caves — вхідний квиток (День 5)</h4>
+    <p>~8€ з особи. Зазвичай без черги.<br>Перевірте графік: <a href="https://grutasdesaovicente.com" target="_blank">grutasdesaovicente.com</a></p>
+  </div>
+  <div class="book-item low">
+    <span class="pill" style="background:var(--green-bg);color:var(--green-text);">На місці ок</span>
+    <h4>Monte Toboggan — спуск на кошику (День 2)</h4>
+    <p>Купується на місці після спуску з канатної дороги. ~30-35€ на двох.</p>
+  </div>
+</div>
+
+<!-- ===== ЩО ВЗЯТИ ===== -->
+<div id="pane-pack" class="tab-pane">
+  <p class="section-note">Травень: +18–22°С вдень, +12–15°С ввечері, +5–8°С на вершинах.</p>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Зібрано: 0 з 0</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Верхній одяг</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Легка пухова куртка (для гір і ранків)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Флісова кофта або светр</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Вітрівка / дощовик</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Кардиган для вечорів у ресторані</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>2–3 футболки</label></div>
+    </div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Нижній одяг</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Трекінгові штани або лосини</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>2 пари джинсів або штанів</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Шорти (для міських днів)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Легкий одяг для вечорів</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Купальник або плавки (пляжі!)</label></div>
+    </div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Взуття</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Трекінгові черевики — обов'язково!</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Зручні кросівки для міста</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Сандалі або шльопки (пляж)</label></div>
+    </div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Спорядження для трекінгу</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Рюкзак 15–20 л для хайку</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Компактний дощовик або пончо</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Трекінгові палки (для коліна!)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Телефон — достатньо для тунелів PR6</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Пластирі від мозолів — в рюкзак</label></div>
+    </div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Аксесуари і захист</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Сонцезахисний крем SPF 50+</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Сонцезахисні окуляри</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Бафф або легкий шарф</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Рукавиці (для Pico Arieiro о 5:00)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Шапка або бейсболка</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Невеликий рушник для пляжу</label></div>
+    </div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Документи і гроші</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Закордонний паспорт</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Медичне страхування</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Водійські права</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Банківська картка (євро)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Готівка ~50-100€ (маленькі кафе в горах)</label></div>
+    </div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Електроніка</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Зарядний банк</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Адаптер не потрібен — UA і PT розетки сумісні</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Навушники</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Кабелі для зарядки</label></div>
+    </div>
+  </div>
+
+  <div class="pack-card">
+    <h4>Аптечка</h4>
+    <div class="check-grid">
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Пластирі від мозолів (hydrocolloid)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Знеболювальне (ібупрофен)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Крем або гель для коліна</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Засіб від нудоти (серпантини!)</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Крем після сонця</label></div>
+      <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Особисті ліки</label></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ПОРАДИ ===== -->
+<div id="pane-tips" class="tab-pane">
+  <div class="tip-card"><strong>🥾 Бронювання трейлів.</strong> З 2026 року всі популярні PR-маршрути потребують обов'язкового резервування + ~4.50€/особу. Бронюйте на visitmadeira.com за 2–3 тижні. PR6 (25 Fontes) розходиться дуже швидко.</div>
+  <div class="tip-card"><strong>🔌 Розетки.</strong> Португалія — тип F (дві круглі штирки). Українські вилки тип F/C — повністю сумісні. Адаптер не потрібен.</div>
+  <div class="tip-card"><strong>🌅 Схід сонця на Pico do Arieiro.</strong> У травні схід ~6:15. Виїжджайте о 05:00 з Ribeira Brava (~55 хв). Паркінг невеликий — приїжджайте за 15-20 хв до сходу. Дуже холодно: +5-8°С і вітер — вдягайтеся тепло.</div>
+  <div class="tip-card"><strong>🏖 Пляжі у травні.</strong> Вода ~19°С — свіжо, але не крижано. Calheta — золотий пісок, найкомфортніший. Seixal і Prainha — чорний вулканічний пісок, дикий вигляд. Для прогулянки босяком — всі чудові.</div>
+  <div class="tip-card"><strong>🦵 Коліно під час трекінгу.</strong> PR6 і Levada do Furado — майже горизонтальні, мінімальне навантаження. Трекінгові палки дуже допомагають на спусках. Ібупрофен і крем для суглобів тримайте під рукою.</div>
+  <div class="tip-card"><strong>🚗 Авто на Мадейрі.</strong> Беріть маленьке авто — дороги вузькі і звивисті. Паркінг у Funchal платний. GPS обов'язковий. На серпантини схильним до нудоти — прийняти таблетку заздалегідь.</div>
+  <div class="tip-card"><strong>⛅ Погода в горах.</strong> Навіть якщо внизу сонце, на вершинах може бути хмарно. Перевіряйте веб-камери Pico do Arieiro перед виходом на маршрут на visitmadeira.com.</div>
+  <div class="tip-card"><strong>💶 Гроші і чайові.</strong> Більшість місць приймають картки. У маленьких кафе в горах може знадобитись готівка. Чайові 5–10% — норма, але не обов'язково.</div>
+  <div class="tip-card"><strong>🌸 Сезон травень.</strong> Ідеальний час: не жарко, менше туристів, цвітуть азалії і гортензії. Левади найзеленіші протягом усього року.</div>
+  <div class="tip-card"><strong>🍹 Poncha.</strong> Місцевий коктейль на основі aguardente (~40%). Класика в Câmara de Lobos. Міцна — не переоцінюйте себе перед хайком наступного дня.</div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+  function toggle(card) {
+    var wasOpen = card.classList.contains('open');
+    document.querySelectorAll('.day-card').forEach(function(c) { c.classList.remove('open'); });
+    if (!wasOpen) card.classList.add('open');
+  }
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('pane-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function ct(el) {
+    var cb = el.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    el.classList.toggle('done', cb.checked);
+    updateProgress();
+    saveChecklist();
+  }
+
+  function updateProgress() {
+    var all = document.querySelectorAll('#pane-pack .check-item input[type=checkbox]');
+    var checked = document.querySelectorAll('#pane-pack .check-item input[type=checkbox]:checked');
+    var pct = all.length ? Math.round(checked.length / all.length * 100) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Зібрано: ' + checked.length + ' з ' + all.length + ' (' + pct + '%)';
+  }
+
+  function saveChecklist() {
+    var items = document.querySelectorAll('#pane-pack .check-item');
+    var state = [];
+    items.forEach(function(item) {
+      state.push(item.querySelector('input').checked);
+    });
+    try { localStorage.setItem('madeira-pack', JSON.stringify(state)); } catch(e) {}
+  }
+
+  function loadChecklist() {
+    try {
+      var saved = localStorage.getItem('madeira-pack');
+      if (!saved) return;
+      var state = JSON.parse(saved);
+      var items = document.querySelectorAll('#pane-pack .check-item');
+      items.forEach(function(item, i) {
+        if (state[i]) {
+          item.querySelector('input').checked = true;
+          item.classList.add('done');
+        }
+      });
+    } catch(e) {}
+    updateProgress();
+  }
+
+  loadChecklist();
+</script>
+</body>
+</html>
