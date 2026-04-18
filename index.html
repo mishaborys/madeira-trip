@@ -75,12 +75,11 @@
       background: var(--bg);
       border-bottom: 0.5px solid var(--border);
       padding: 1.25rem 1.5rem;
-      position: -webkit-sticky;
-      position: sticky;
+      position: fixed;
       top: 0;
+      left: 0;
+      right: 0;
       z-index: 100;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
     }
     .header-inner {
       max-width: 720px;
@@ -99,12 +98,11 @@
       background: var(--bg);
       border-bottom: 0.5px solid var(--border);
       padding: 0 1.5rem;
-      position: -webkit-sticky;
-      position: sticky;
-      top: 69px;
+      position: fixed;
+      top: var(--header-height, 69px);
+      left: 0;
+      right: 0;
       z-index: 99;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
     }
     .tabs-inner {
       max-width: 720px;
@@ -725,6 +723,15 @@
 </div><!-- /content -->
 
 <script>
+  function updateOffsets() {
+    var headerH = document.querySelector('.site-header').offsetHeight;
+    var tabsH = document.querySelector('.tabs-bar').offsetHeight;
+    document.documentElement.style.setProperty('--header-height', headerH + 'px');
+    document.querySelector('.content').style.paddingTop = (headerH + tabsH + 16) + 'px';
+  }
+  updateOffsets();
+  window.addEventListener('resize', updateOffsets);
+
   function toggle(card) {
     var wasOpen = card.classList.contains('open');
     document.querySelectorAll('.day-card').forEach(function(c) { c.classList.remove('open'); });
