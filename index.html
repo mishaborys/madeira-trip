@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Мадейра — травень 2026</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -77,7 +77,8 @@
     .site-header {
       background: var(--bg);
       border-bottom: 0.5px solid var(--border);
-      padding: 1.25rem 1.5rem;
+      padding: 0.75rem 1.25rem;
+      padding-top: max(0.75rem, env(safe-area-inset-top));
       position: fixed;
       top: 0;
       left: 0;
@@ -92,44 +93,47 @@
       justify-content: space-between;
       gap: 12px;
     }
-    .header-title { font-size: 17px; font-weight: 600; color: var(--text); }
-    .header-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
-    .header-flag { font-size: 24px; }
+    .header-title { font-size: 16px; font-weight: 600; color: var(--text); }
+    .header-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    .header-flag { font-size: 22px; }
 
-    /* TABS */
+    /* BOTTOM NAV */
     .tabs-bar {
       background: var(--bg);
-      border-bottom: 0.5px solid var(--border);
-      padding: 0 1.5rem;
+      border-top: 0.5px solid var(--border);
       position: fixed;
-      top: var(--header-height, 69px);
+      bottom: 0;
       left: 0;
       right: 0;
       z-index: 99;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
     .tabs-inner {
-      max-width: 720px;
-      margin: 0 auto;
       display: flex;
-      gap: 0;
       overflow-x: auto;
       scrollbar-width: none;
     }
     .tabs-inner::-webkit-scrollbar { display: none; }
     .tab-btn {
-      font-size: 13px;
-      font-weight: 500;
-      padding: 14px 16px;
+      flex: 1;
+      min-width: 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 8px 4px 7px;
       border: none;
       background: transparent;
-      color: var(--text2);
+      color: var(--text3);
       cursor: pointer;
-      border-bottom: 2px solid transparent;
-      white-space: nowrap;
-      transition: all 0.15s;
+      transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .tab-btn:hover { color: var(--text); }
-    .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
+    .tab-btn:active { opacity: 0.6; }
+    .tab-btn.active { color: var(--text); }
+    .tab-icon { font-size: 21px; line-height: 1; }
+    .tab-label { font-size: 10px; font-weight: 500; white-space: nowrap; }
 
     /* CONTENT */
     .content {
@@ -312,7 +316,7 @@
     /* MAP TAB */
     .map-wrap { margin: 8px -1.5rem -1.5rem; overflow: hidden; border-radius: 0 0 var(--radius) var(--radius); }
     @media (max-width: 480px) { .map-wrap { margin: 8px -1rem -1rem; } }
-    #map-view { height: calc(100dvh - var(--total-fixed-height, 130px) - 90px); min-height: 400px; }
+    #map-view { height: calc(100dvh - var(--header-height, 54px) - var(--nav-height, 70px) - 60px); min-height: 340px; }
     .map-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 0 10px; }
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.6); }
@@ -343,22 +347,33 @@
 
     /* WEATHER TAB */
     .weather-loading { text-align: center; padding: 3rem; color: var(--text2); font-size: 15px; }
-    .weather-current { background: var(--bg2); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; }
-    .weather-current-icon { font-size: 3.5rem; line-height: 1; }
+    .weather-current { background: var(--bg2); border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; }
+    .weather-current-icon { font-size: 3rem; line-height: 1; }
     .weather-current-info { flex: 1; }
-    .weather-current-temp { font-size: 2.25rem; font-weight: 700; color: var(--text); line-height: 1; }
-    .weather-current-desc { font-size: 14px; color: var(--text2); margin-top: 3px; }
-    .weather-current-meta { display: flex; gap: 1rem; margin-top: 8px; flex-wrap: wrap; }
+    .weather-current-temp { font-size: 2rem; font-weight: 700; color: var(--text); line-height: 1; }
+    .weather-current-desc { font-size: 13px; color: var(--text2); margin-top: 3px; }
+    .weather-current-meta { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
     .weather-current-meta span { font-size: 12px; color: var(--text3); }
-    .weather-forecast { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-    @media (max-width: 600px) { .weather-forecast { grid-template-columns: repeat(4, 1fr); } }
-    @media (max-width: 380px) { .weather-forecast { grid-template-columns: repeat(3, 1fr); } }
-    .weather-day { background: var(--bg2); border-radius: var(--radius-sm); padding: 10px 6px; text-align: center; }
-    .weather-day-name { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 5px; }
-    .weather-day-icon { font-size: 1.6rem; line-height: 1.4; }
-    .weather-day-temps { font-size: 12px; color: var(--text); font-weight: 600; margin-top: 4px; }
+    .weather-forecast { display: flex; flex-direction: column; gap: 6px; }
+    .weather-day { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .weather-day-header { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .weather-day-header:active { background: var(--bg2); }
+    .weather-day-name { font-size: 14px; font-weight: 600; color: var(--text); min-width: 80px; }
+    .weather-day-icon { font-size: 1.4rem; line-height: 1; }
+    .weather-day-temps { font-size: 13px; color: var(--text); font-weight: 600; margin-left: auto; white-space: nowrap; }
     .weather-day-temps .lo { color: var(--text3); font-weight: 400; }
-    .weather-day-rain { font-size: 11px; color: var(--blue-text); margin-top: 3px; }
+    .weather-day-rain { font-size: 12px; color: var(--blue-text); margin-left: 10px; white-space: nowrap; }
+    .weather-day-chevron { font-size: 12px; color: var(--text3); margin-left: 6px; transition: transform 0.2s; display: inline-block; }
+    .weather-day.open .weather-day-chevron { transform: rotate(90deg); }
+    .weather-hourly { display: none; border-top: 0.5px solid var(--border); }
+    .weather-day.open .weather-hourly { display: block; }
+    .weather-hourly-scroll { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; padding: 10px 10px; gap: 6px; }
+    .weather-hourly-scroll::-webkit-scrollbar { display: none; }
+    .weather-hour { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 52px; background: var(--bg2); border-radius: var(--radius-sm); padding: 8px 4px; flex-shrink: 0; }
+    .wh-time { font-size: 11px; font-weight: 600; color: var(--text2); }
+    .wh-icon { font-size: 1.3rem; line-height: 1.2; }
+    .wh-temp { font-size: 13px; font-weight: 600; color: var(--text); }
+    .wh-rain { font-size: 10px; color: var(--blue-text); }
     .weather-location { font-size: 12px; color: var(--text3); text-align: center; margin-top: 1rem; }
   </style>
 </head>
@@ -376,13 +391,13 @@
 
 <div class="tabs-bar">
   <div class="tabs-inner">
-    <button class="tab-btn active" onclick="switchTab('plan',this)">📅 План</button>
-    <button class="tab-btn" onclick="switchTab('food',this)">🍽 Їжа</button>
-    <button class="tab-btn" onclick="switchTab('book',this)">🎫 Бронювання</button>
-    <button class="tab-btn" onclick="switchTab('pack',this)">🎒 Що взяти</button>
-    <button class="tab-btn" onclick="switchTab('tips',this)">💡 Поради</button>
-    <button class="tab-btn" onclick="switchTab('map',this)">🗺 Карта</button>
-    <button class="tab-btn" onclick="switchTab('weather',this)">🌤 Погода</button>
+    <button class="tab-btn active" onclick="switchTab('plan',this)"><span class="tab-icon">📅</span><span class="tab-label">План</span></button>
+    <button class="tab-btn" onclick="switchTab('food',this)"><span class="tab-icon">🍽</span><span class="tab-label">Їжа</span></button>
+    <button class="tab-btn" onclick="switchTab('book',this)"><span class="tab-icon">🎫</span><span class="tab-label">Броні</span></button>
+    <button class="tab-btn" onclick="switchTab('pack',this)"><span class="tab-icon">🎒</span><span class="tab-label">Речі</span></button>
+    <button class="tab-btn" onclick="switchTab('tips',this)"><span class="tab-icon">💡</span><span class="tab-label">Поради</span></button>
+    <button class="tab-btn" onclick="switchTab('map',this)"><span class="tab-icon">🗺</span><span class="tab-label">Карта</span></button>
+    <button class="tab-btn" onclick="switchTab('weather',this)"><span class="tab-icon">🌤</span><span class="tab-label">Погода</span></button>
   </div>
 </div>
 
@@ -810,9 +825,12 @@
 <script>
   function updateOffsets() {
     var headerH = document.querySelector('.site-header').offsetHeight;
-    var tabsH = document.querySelector('.tabs-bar').offsetHeight;
+    var navH = document.querySelector('.tabs-bar').offsetHeight;
     document.documentElement.style.setProperty('--header-height', headerH + 'px');
-    document.querySelector('.content').style.paddingTop = (headerH + tabsH + 16) + 'px';
+    document.documentElement.style.setProperty('--nav-height', navH + 'px');
+    var content = document.querySelector('.content');
+    content.style.paddingTop = (headerH + 16) + 'px';
+    content.style.paddingBottom = (navH + 16) + 'px';
   }
   updateOffsets();
   window.addEventListener('resize', updateOffsets);
@@ -824,15 +842,40 @@
   }
 
   var mapInstance = null;
+  var weatherLoaded = false;
+  var currentTab = 'plan';
+  var tabOrder = ['plan','food','book','pack','tips','map','weather'];
 
   function switchTab(name, btn) {
+    currentTab = name;
     document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
     document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
     document.getElementById('pane-' + name).classList.add('active');
     btn.classList.add('active');
+    btn.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (name === 'map' && !mapInstance) { loadGoogleMaps(); }
+    if (name === 'weather' && !weatherLoaded) { weatherLoaded = true; loadWeather(); }
   }
+
+  // Swipe to change tabs
+  var touchStartX = 0, touchStartY = 0;
+  document.querySelector('.content').addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, {passive: true});
+  document.querySelector('.content').addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      var idx = tabOrder.indexOf(currentTab);
+      var next = dx < 0 ? Math.min(idx + 1, tabOrder.length - 1) : Math.max(idx - 1, 0);
+      if (next !== idx) {
+        var btn = document.querySelectorAll('.tab-btn')[next];
+        switchTab(tabOrder[next], btn);
+      }
+    }
+  }, {passive: true});
 
   function loadGoogleMaps() {
     if (window.google && window.google.maps) { initGoogleMap(); return; }
@@ -1059,23 +1102,11 @@
   subscribeChecklist();
 
   // ── Weather (Open-Meteo) ──────────────────────────────
-  var weatherLoaded = false;
-
-  function switchTabOrig(name, btn) {}
-
-  var _origSwitchTab = switchTab;
-  switchTab = function(name, btn) {
-    _origSwitchTab(name, btn);
-    if (name === 'weather' && !weatherLoaded) {
-      weatherLoaded = true;
-      loadWeather();
-    }
-  };
-
   function loadWeather() {
     var url = 'https://api.open-meteo.com/v1/forecast'
       + '?latitude=32.65&longitude=-17.05'
       + '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max'
+      + '&hourly=temperature_2m,precipitation,weathercode,windspeed_10m'
       + '&current_weather=true'
       + '&timezone=Atlantic%2FMadeira'
       + '&forecast_days=7';
@@ -1107,45 +1138,70 @@
     85:'Слабкі снігові зливи',86:'Сильні снігові зливи',
     95:'Гроза',96:'Гроза з градом',99:'Гроза з великим градом'
   };
-  var dayNames = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
+  var dayNamesFull = ['Неділя','Понеділок','Вівторок','Середа','Четвер','Пятниця','Субота'];
 
   function renderWeather(data) {
     var cw = data.current_weather;
     var d = data.daily;
+    var h = data.hourly;
     var code = cw.weathercode;
-    var icon = wmoEmoji[code] || '🌡';
-    var desc = wmoDesc[code] || '';
 
     var html = '<div class="weather-current">'
-      + '<div class="weather-current-icon">' + icon + '</div>'
+      + '<div class="weather-current-icon">' + (wmoEmoji[code] || '🌡') + '</div>'
       + '<div class="weather-current-info">'
       + '<div class="weather-current-temp">' + Math.round(cw.temperature) + '°C</div>'
-      + '<div class="weather-current-desc">' + desc + '</div>'
+      + '<div class="weather-current-desc">' + (wmoDesc[code] || '') + '</div>'
       + '<div class="weather-current-meta">'
       + '<span>💨 ' + Math.round(cw.windspeed) + ' км/г</span>'
-      + '</div>'
-      + '</div></div>';
+      + '</div></div></div>';
 
     html += '<div class="weather-forecast">';
     for (var i = 0; i < d.time.length; i++) {
       var dt = new Date(d.time[i] + 'T12:00:00');
-      var dayName = i === 0 ? 'Сьогодні' : dayNames[dt.getDay()];
+      var dayName = i === 0 ? 'Сьогодні' : (i === 1 ? 'Завтра' : dayNamesFull[dt.getDay()]);
       var dc = d.weathercode[i];
       var rain = d.precipitation_sum[i];
-      html += '<div class="weather-day">'
-        + '<div class="weather-day-name">' + dayName + '</div>'
-        + '<div class="weather-day-icon">' + (wmoEmoji[dc] || '🌡') + '</div>'
-        + '<div class="weather-day-temps">'
-        + Math.round(d.temperature_2m_max[i]) + '° '
-        + '<span class="lo">' + Math.round(d.temperature_2m_min[i]) + '°</span>'
+
+      // build hourly slots for this day (every 3 hours)
+      var hourlyHtml = '<div class="weather-hourly-scroll">';
+      var dayStart = i * 24;
+      for (var hi = dayStart; hi < dayStart + 24; hi += 3) {
+        if (!h.time[hi]) continue;
+        var timeStr = h.time[hi].slice(11, 16);
+        var hCode = h.weathercode[hi];
+        var hRain = h.precipitation[hi];
+        hourlyHtml += '<div class="weather-hour">'
+          + '<span class="wh-time">' + timeStr + '</span>'
+          + '<span class="wh-icon">' + (wmoEmoji[hCode] || '🌡') + '</span>'
+          + '<span class="wh-temp">' + Math.round(h.temperature_2m[hi]) + '°</span>'
+          + (hRain > 0.05 ? '<span class="wh-rain">💧' + hRain.toFixed(1) + '</span>' : '<span class="wh-rain" style="visibility:hidden">.</span>')
+          + '</div>';
+      }
+      hourlyHtml += '</div>';
+
+      html += '<div class="weather-day" id="wday-' + i + '">'
+        + '<div class="weather-day-header" onclick="toggleWeatherDay(' + i + ')">'
+        + '<span class="weather-day-name">' + dayName + '</span>'
+        + '<span class="weather-day-icon">' + (wmoEmoji[dc] || '🌡') + '</span>'
+        + '<span class="weather-day-temps">' + Math.round(d.temperature_2m_max[i]) + '° <span class="lo">' + Math.round(d.temperature_2m_min[i]) + '°</span></span>'
+        + (rain > 0.1 ? '<span class="weather-day-rain">💧 ' + rain.toFixed(1) + 'мм</span>' : '')
+        + '<span class="weather-day-chevron">›</span>'
         + '</div>'
-        + (rain > 0.1 ? '<div class="weather-day-rain">💧 ' + rain.toFixed(1) + ' мм</div>' : '')
+        + '<div class="weather-hourly">' + hourlyHtml + '</div>'
         + '</div>';
     }
     html += '</div>';
     html += '<div class="weather-location">📍 Рібейра-Брава, Мадейра</div>';
 
     document.getElementById('weather-root').innerHTML = html;
+    // auto-open today
+    toggleWeatherDay(0);
+  }
+
+  function toggleWeatherDay(i) {
+    var el = document.getElementById('wday-' + i);
+    if (!el) return;
+    el.classList.toggle('open');
   }
 </script>
 </body>
