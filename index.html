@@ -306,7 +306,6 @@
     @media (max-width: 480px) { .map-wrap { margin: -1rem -1rem -1rem; } }
     #map-view { height: calc(100dvh - var(--total-fixed-height, 130px) - 56px); min-height: 420px; }
     @media (prefers-color-scheme: dark) {
-      .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
       .leaflet-container { background: #1a1a1a; }
     }
     .map-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 0 10px; }
@@ -798,9 +797,14 @@
 
   function initMap() {
     leafletMap = L.map('map-view', { zoomControl: true }).setView([32.757, -17.02], 11);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
-      maxZoom: 18
+    var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var tileUrl = isDark
+      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    L.tileLayer(tileUrl, {
+      attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a> © <a href="https://carto.com">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(leafletMap);
 
     var cats = {
