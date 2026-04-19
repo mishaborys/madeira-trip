@@ -266,6 +266,12 @@
     }
     .check-item label { font-size: 13px; color: var(--text); cursor: pointer; line-height: 1.4; }
     .check-item.done label { color: var(--text3); text-decoration: line-through; }
+    .check-item .remove-btn { margin-left: auto; padding: 4px 8px; border: none; background: none; color: var(--text3); cursor: pointer; font-size: 17px; line-height: 1; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .check-item .remove-btn:active { color: var(--red-text); }
+    .custom-add-row { display: flex; gap: 8px; padding: 10px 0 2px; }
+    .custom-add-row input { flex: 1; min-width: 0; border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 14px; background: var(--bg3); color: var(--text); outline: none; font-family: inherit; }
+    .custom-add-row input:focus { border-color: var(--text2); }
+    .custom-add-row button { padding: 9px 18px; border: none; border-radius: var(--radius-sm); background: var(--text); color: var(--bg); font-size: 20px; font-weight: 400; cursor: pointer; line-height: 1; flex-shrink: 0; }
 
     /* TIPS TAB */
     .tip-card {
@@ -787,6 +793,16 @@
       <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Особисті ліки</label></div>
     </div>
   </div>
+
+  <div class="pack-card">
+    <h4>Своє</h4>
+    <div class="check-grid" id="custom-list"></div>
+    <div class="custom-add-row">
+      <input type="text" id="custom-input" placeholder="Додати елемент…" maxlength="100"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomItem();}">
+      <button onclick="addCustomItem()">+</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== ПОРАДИ ===== -->
@@ -1028,12 +1044,18 @@
     dot.className = 'sync-dot' + (state ? ' ' + state : '');
   }
 
+  var customItems = [];
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   function getState() {
-    return Array.from(document.querySelectorAll('#pane-pack .check-item input')).map(function(cb) { return cb.checked; });
+    return Array.from(document.querySelectorAll('#pane-pack .check-item:not(.custom-item) input')).map(function(cb) { return cb.checked; });
   }
 
   function applyState(state) {
-    document.querySelectorAll('#pane-pack .check-item').forEach(function(item, i) {
+    document.querySelectorAll('#pane-pack .check-item:not(.custom-item)').forEach(function(item, i) {
       var checked = !!(state && state[i]);
       item.querySelector('input').checked = checked;
       item.classList.toggle('done', checked);
@@ -1041,19 +1063,49 @@
     updateProgress();
   }
 
+  function renderCustomItems() {
+    var list = document.getElementById('custom-list');
+    if (!list) return;
+    list.innerHTML = customItems.map(function(item, i) {
+      return '<div class="check-item custom-item' + (item.checked ? ' done' : '') + '" onclick="ctCustom(' + i + ')">'
+        + '<input type="checkbox"' + (item.checked ? ' checked' : '') + ' onclick="event.stopPropagation()">'
+        + '<label>' + escHtml(item.text) + '</label>'
+        + '<button class="remove-btn" onclick="event.stopPropagation();removeCustomItem(' + i + ')">×</button>'
+        + '</div>';
+    }).join('');
+    updateProgress();
+  }
+
+  function save() {
+    var data = { state: getState(), custom: customItems };
+    try { localStorage.setItem('madeira-pack-' + currentPerson, JSON.stringify(data)); } catch(e) {}
+    setSyncDot(currentPerson, 'syncing');
+    db.ref('checklists/person' + currentPerson).set(data)
+      .then(function() { setSyncDot(currentPerson, 'synced'); })
+      .catch(function() { setSyncDot(currentPerson, ''); });
+  }
+
   function subscribeChecklist() {
     if (firestoreUnsub) { firestoreUnsub(); firestoreUnsub = null; }
+    customItems = [];
+    renderCustomItems();
     var ref = db.ref('checklists/person' + currentPerson);
     try {
       var cached = localStorage.getItem('madeira-pack-' + currentPerson);
-      applyState(cached ? JSON.parse(cached) : []);
+      if (cached) {
+        var parsed = JSON.parse(cached);
+        applyState(Array.isArray(parsed) ? parsed : (parsed.state || []));
+        if (parsed.custom) { customItems = parsed.custom; renderCustomItems(); }
+      } else { applyState([]); }
     } catch(e) { applyState([]); }
     setSyncDot(currentPerson, 'syncing');
     ref.on('value', function(snapshot) {
       var data = snapshot.val();
-      if (data && data.state) {
-        applyState(data.state);
-        try { localStorage.setItem('madeira-pack-' + currentPerson, JSON.stringify(data.state)); } catch(e) {}
+      if (data) {
+        applyState(data.state || []);
+        customItems = data.custom || [];
+        renderCustomItems();
+        try { localStorage.setItem('madeira-pack-' + currentPerson, JSON.stringify(data)); } catch(e) {}
       }
       setSyncDot(currentPerson, 'synced');
     }, function() { setSyncDot(currentPerson, ''); });
@@ -1065,12 +1117,30 @@
     cb.checked = !cb.checked;
     el.classList.toggle('done', cb.checked);
     updateProgress();
-    var state = getState();
-    try { localStorage.setItem('madeira-pack-' + currentPerson, JSON.stringify(state)); } catch(e) {}
-    setSyncDot(currentPerson, 'syncing');
-    db.ref('checklists/person' + currentPerson).set({ state: state })
-      .then(function() { setSyncDot(currentPerson, 'synced'); })
-      .catch(function() { setSyncDot(currentPerson, ''); });
+    save();
+  }
+
+  function ctCustom(idx) {
+    customItems[idx].checked = !customItems[idx].checked;
+    renderCustomItems();
+    save();
+  }
+
+  function removeCustomItem(idx) {
+    customItems.splice(idx, 1);
+    renderCustomItems();
+    save();
+  }
+
+  function addCustomItem() {
+    var input = document.getElementById('custom-input');
+    var text = input.value.trim();
+    if (!text) return;
+    customItems.push({ text: text, checked: false });
+    input.value = '';
+    renderCustomItems();
+    save();
+    input.focus();
   }
 
   function updateProgress() {
