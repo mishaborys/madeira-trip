@@ -340,6 +340,26 @@
       .food-grid { grid-template-columns: 1fr; }
       .beach-cards { grid-template-columns: 1fr; }
     }
+
+    /* WEATHER TAB */
+    .weather-loading { text-align: center; padding: 3rem; color: var(--text2); font-size: 15px; }
+    .weather-current { background: var(--bg2); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; }
+    .weather-current-icon { font-size: 3.5rem; line-height: 1; }
+    .weather-current-info { flex: 1; }
+    .weather-current-temp { font-size: 2.25rem; font-weight: 700; color: var(--text); line-height: 1; }
+    .weather-current-desc { font-size: 14px; color: var(--text2); margin-top: 3px; }
+    .weather-current-meta { display: flex; gap: 1rem; margin-top: 8px; flex-wrap: wrap; }
+    .weather-current-meta span { font-size: 12px; color: var(--text3); }
+    .weather-forecast { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    @media (max-width: 600px) { .weather-forecast { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 380px) { .weather-forecast { grid-template-columns: repeat(3, 1fr); } }
+    .weather-day { background: var(--bg2); border-radius: var(--radius-sm); padding: 10px 6px; text-align: center; }
+    .weather-day-name { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 5px; }
+    .weather-day-icon { font-size: 1.6rem; line-height: 1.4; }
+    .weather-day-temps { font-size: 12px; color: var(--text); font-weight: 600; margin-top: 4px; }
+    .weather-day-temps .lo { color: var(--text3); font-weight: 400; }
+    .weather-day-rain { font-size: 11px; color: var(--blue-text); margin-top: 3px; }
+    .weather-location { font-size: 12px; color: var(--text3); text-align: center; margin-top: 1rem; }
   </style>
 </head>
 <body>
@@ -362,6 +382,7 @@
     <button class="tab-btn" onclick="switchTab('pack',this)">🎒 Що взяти</button>
     <button class="tab-btn" onclick="switchTab('tips',this)">💡 Поради</button>
     <button class="tab-btn" onclick="switchTab('map',this)">🗺 Карта</button>
+    <button class="tab-btn" onclick="switchTab('weather',this)">🌤 Погода</button>
   </div>
 </div>
 
@@ -780,6 +801,10 @@
   <div class="map-wrap"><div id="map-view"></div></div>
 </div>
 
+<div id="pane-weather" class="tab-pane">
+  <div id="weather-root"><div class="weather-loading">🌤 Завантаження погоди…</div></div>
+</div>
+
 </div><!-- /content -->
 
 <script>
@@ -1032,6 +1057,96 @@
   }
 
   subscribeChecklist();
+
+  // ── Weather (Open-Meteo) ──────────────────────────────
+  var weatherLoaded = false;
+
+  function switchTabOrig(name, btn) {}
+
+  var _origSwitchTab = switchTab;
+  switchTab = function(name, btn) {
+    _origSwitchTab(name, btn);
+    if (name === 'weather' && !weatherLoaded) {
+      weatherLoaded = true;
+      loadWeather();
+    }
+  };
+
+  function loadWeather() {
+    var url = 'https://api.open-meteo.com/v1/forecast'
+      + '?latitude=32.65&longitude=-17.05'
+      + '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max'
+      + '&current_weather=true'
+      + '&timezone=Atlantic%2FMadeira'
+      + '&forecast_days=7';
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(renderWeather)
+      .catch(function() {
+        document.getElementById('weather-root').innerHTML = '<div class="weather-loading">⚠️ Не вдалося завантажити погоду.</div>';
+      });
+  }
+
+  var wmoEmoji = {
+    0:'☀️',1:'🌤',2:'⛅',3:'🌥',
+    45:'🌫',48:'🌫',
+    51:'🌦',53:'🌦',55:'🌧',
+    61:'🌧',63:'🌧',65:'🌧',
+    71:'🌨',73:'🌨',75:'❄️',77:'🌨',
+    80:'🌦',81:'🌧',82:'⛈',
+    85:'🌨',86:'❄️',
+    95:'⛈',96:'⛈',99:'⛈'
+  };
+  var wmoDesc = {
+    0:'Ясно',1:'Переважно ясно',2:'Мінлива хмарність',3:'Хмарно',
+    45:'Туман',48:'Обледенілий туман',
+    51:'Слабка мряка',53:'Мряка',55:'Сильна мряка',
+    61:'Слабкий дощ',63:'Дощ',65:'Сильний дощ',
+    71:'Слабкий сніг',73:'Сніг',75:'Сильний сніг',77:'Снігові зерна',
+    80:'Невеликі зливи',81:'Зливи',82:'Потужні зливи',
+    85:'Слабкі снігові зливи',86:'Сильні снігові зливи',
+    95:'Гроза',96:'Гроза з градом',99:'Гроза з великим градом'
+  };
+  var dayNames = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+  function renderWeather(data) {
+    var cw = data.current_weather;
+    var d = data.daily;
+    var code = cw.weathercode;
+    var icon = wmoEmoji[code] || '🌡';
+    var desc = wmoDesc[code] || '';
+
+    var html = '<div class="weather-current">'
+      + '<div class="weather-current-icon">' + icon + '</div>'
+      + '<div class="weather-current-info">'
+      + '<div class="weather-current-temp">' + Math.round(cw.temperature) + '°C</div>'
+      + '<div class="weather-current-desc">' + desc + '</div>'
+      + '<div class="weather-current-meta">'
+      + '<span>💨 ' + Math.round(cw.windspeed) + ' км/г</span>'
+      + '</div>'
+      + '</div></div>';
+
+    html += '<div class="weather-forecast">';
+    for (var i = 0; i < d.time.length; i++) {
+      var dt = new Date(d.time[i] + 'T12:00:00');
+      var dayName = i === 0 ? 'Сьогодні' : dayNames[dt.getDay()];
+      var dc = d.weathercode[i];
+      var rain = d.precipitation_sum[i];
+      html += '<div class="weather-day">'
+        + '<div class="weather-day-name">' + dayName + '</div>'
+        + '<div class="weather-day-icon">' + (wmoEmoji[dc] || '🌡') + '</div>'
+        + '<div class="weather-day-temps">'
+        + Math.round(d.temperature_2m_max[i]) + '° '
+        + '<span class="lo">' + Math.round(d.temperature_2m_min[i]) + '°</span>'
+        + '</div>'
+        + (rain > 0.1 ? '<div class="weather-day-rain">💧 ' + rain.toFixed(1) + ' мм</div>' : '')
+        + '</div>';
+    }
+    html += '</div>';
+    html += '<div class="weather-location">📍 Рібейра-Брава, Мадейра</div>';
+
+    document.getElementById('weather-root').innerHTML = html;
+  }
 </script>
 </body>
 </html>
