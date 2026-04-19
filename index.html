@@ -6,7 +6,7 @@
   <title>Мадейра — травень 2026</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -656,7 +656,7 @@
     </button>
     <button class="person-btn" id="btn-p1" onclick="switchPerson(1)">
       <span class="person-emoji">👤</span>
-      <span id="name-p1">Оля</span>
+      <span id="name-p1">Вероніка</span>
       <span class="sync-dot" id="sync-p1"></span>
     </button>
   </div>
@@ -928,16 +928,17 @@
   firebase.initializeApp({
     apiKey: "AIzaSyDxichXEQkwEZ1-aOa-bV9L20zStyK7IMw",
     authDomain: "madeira-trip-aa0b0.firebaseapp.com",
+    databaseURL: "https://madeira-trip-aa0b0-default-rtdb.firebaseio.com",
     projectId: "madeira-trip-aa0b0",
     storageBucket: "madeira-trip-aa0b0.firebasestorage.app",
     messagingSenderId: "379081518798",
     appId: "1:379081518798:web:8f8690627080ec98f8ea9f"
   });
-  var db = firebase.firestore();
+  var db = firebase.database();
 
   // ── Profile state ─────────────────────────────────────
   var currentPerson = parseInt(localStorage.getItem('madeira-person') || '0');
-  var personNames = JSON.parse(localStorage.getItem('madeira-names') || '["Міша","Оля"]');
+  var personNames = JSON.parse(localStorage.getItem('madeira-names') || '["Міша","Вероніка"]');
   var firestoreUnsub = null;
 
   document.getElementById('name-p0').textContent = personNames[0];
@@ -991,22 +992,22 @@
   }
 
   function subscribeChecklist() {
-    if (firestoreUnsub) firestoreUnsub();
-    var docId = 'person' + currentPerson;
-    // Show cached immediately
+    if (firestoreUnsub) { firestoreUnsub(); firestoreUnsub = null; }
+    var ref = db.ref('checklists/person' + currentPerson);
     try {
       var cached = localStorage.getItem('madeira-pack-' + currentPerson);
       applyState(cached ? JSON.parse(cached) : []);
     } catch(e) { applyState([]); }
     setSyncDot(currentPerson, 'syncing');
-    firestoreUnsub = db.collection('checklists').doc(docId).onSnapshot(function(doc) {
-      if (doc.exists) {
-        var state = doc.data().state;
-        applyState(state);
-        try { localStorage.setItem('madeira-pack-' + currentPerson, JSON.stringify(state)); } catch(e) {}
+    ref.on('value', function(snapshot) {
+      var data = snapshot.val();
+      if (data && data.state) {
+        applyState(data.state);
+        try { localStorage.setItem('madeira-pack-' + currentPerson, JSON.stringify(data.state)); } catch(e) {}
       }
       setSyncDot(currentPerson, 'synced');
     }, function() { setSyncDot(currentPerson, ''); });
+    firestoreUnsub = function() { ref.off(); };
   }
 
   function ct(el) {
@@ -1017,7 +1018,7 @@
     var state = getState();
     try { localStorage.setItem('madeira-pack-' + currentPerson, JSON.stringify(state)); } catch(e) {}
     setSyncDot(currentPerson, 'syncing');
-    db.collection('checklists').doc('person' + currentPerson).set({ state: state })
+    db.ref('checklists/person' + currentPerson).set({ state: state })
       .then(function() { setSyncDot(currentPerson, 'synced'); })
       .catch(function() { setSyncDot(currentPerson, ''); });
   }
