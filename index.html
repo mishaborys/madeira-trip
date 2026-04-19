@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Мадейра — травень 2026</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -299,6 +301,25 @@
       margin: 20px 0 10px;
     }
 
+    /* MAP TAB */
+    .map-wrap { margin: -1rem -1.5rem -1.5rem; overflow: hidden; border-radius: 0 0 var(--radius) var(--radius); }
+    @media (max-width: 480px) { .map-wrap { margin: -1rem -1rem -1rem; } }
+    #map-view { height: calc(100dvh - var(--total-fixed-height, 130px) - 56px); min-height: 420px; }
+    @media (prefers-color-scheme: dark) {
+      .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+      .leaflet-container { background: #1a1a1a; }
+    }
+    .map-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 0 10px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.6); }
+    .leaflet-popup-content { font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 13px; }
+    .leaflet-popup-content b { display: block; margin-bottom: 2px; }
+    .leaflet-popup-content small { color: #888; }
+    .popup-links { display: flex; gap: 6px; margin-top: 6px; }
+    .popup-links a { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; text-decoration: none; }
+    .popup-links a.gm { background: #E8F0FE; color: #1967D2; }
+    .popup-links a.wz { background: #E6F7EC; color: #0B6623; }
+
     .nav-links { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
     .nav-link { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; text-decoration: none; white-space: nowrap; }
     .nav-link.gmaps { background: #E8F0FE; color: #1967D2; }
@@ -336,6 +357,7 @@
     <button class="tab-btn" onclick="switchTab('book',this)">Бронювання</button>
     <button class="tab-btn" onclick="switchTab('pack',this)">Що взяти</button>
     <button class="tab-btn" onclick="switchTab('tips',this)">Поради</button>
+    <button class="tab-btn" onclick="switchTab('map',this)">🗺 Карта</button>
   </div>
 </div>
 
@@ -729,6 +751,19 @@
   <div class="tip-card"><strong>🍹 Poncha.</strong> Місцевий коктейль на основі aguardente (~40%). Класика в Câmara de Lobos. Міцна — не переоцінюйте себе перед хайком наступного дня.</div>
 </div>
 
+<!-- ===== КАРТА ===== -->
+<div id="pane-map" class="tab-pane">
+  <div class="map-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#3B82F6"></div>Атракції</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Трекінг</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#06B6D4"></div>Пляжі</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EF4444"></div>Ресторани</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div>Оглядові точки</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1F2937"></div>Базовий табір</div>
+  </div>
+  <div class="map-wrap"><div id="map-view"></div></div>
+</div>
+
 </div><!-- /content -->
 
 <script>
@@ -747,12 +782,101 @@
     if (!wasOpen) card.classList.add('open');
   }
 
+  var leafletMap = null;
+
   function switchTab(name, btn) {
     document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
     document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
     document.getElementById('pane-' + name).classList.add('active');
     btn.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (name === 'map') {
+      if (!leafletMap) { initMap(); }
+      else { setTimeout(function(){ leafletMap.invalidateSize(); }, 50); }
+    }
+  }
+
+  function initMap() {
+    leafletMap = L.map('map-view', { zoomControl: true }).setView([32.757, -17.02], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+      maxZoom: 18
+    }).addTo(leafletMap);
+
+    var cats = {
+      base:    { color: '#1F2937', radius: 11 },
+      sight:   { color: '#3B82F6', radius: 8 },
+      trek:    { color: '#F59E0B', radius: 9 },
+      beach:   { color: '#06B6D4', radius: 8 },
+      rest:    { color: '#EF4444', radius: 7 },
+      view:    { color: '#8B5CF6', radius: 8 },
+      airport: { color: '#6B7280', radius: 8 }
+    };
+
+    var pins = [
+      [32.6523, -17.0643, '🏠 Ribeira Brava — базовий табір', 'base', '', ''],
+      [32.6978, -16.7745, '✈️ Аеропорт Funchal', 'airport', 'https://maps.google.com/?q=32.6978,-16.7745', 'https://waze.com/ul?ll=32.6978%2C-16.7745&navigate=yes'],
+      // День 2 — Funchal
+      [32.6490, -16.9004, 'Mercado dos Lavradores', 'sight', 'https://maps.google.com/?q=32.6490,-16.9004', 'https://waze.com/ul?ll=32.6490%2C-16.9004&navigate=yes'],
+      [32.6498, -16.9089, 'Sé Cathedral + Rua de Santa Maria', 'sight', 'https://maps.google.com/?q=32.6498,-16.9089', 'https://waze.com/ul?ll=32.6498%2C-16.9089&navigate=yes'],
+      [32.6483, -16.9065, 'Funchal Old Town', 'sight', 'https://maps.google.com/?q=32.6483,-16.9065', 'https://waze.com/ul?ll=32.6483%2C-16.9065&navigate=yes'],
+      [32.6484, -16.9008, 'Канатна дорога Monte', 'sight', 'https://maps.google.com/?q=32.6484,-16.9008', 'https://waze.com/ul?ll=32.6484%2C-16.9008&navigate=yes'],
+      [32.6654, -16.8963, 'Monte Palace Tropical Garden', 'sight', 'https://maps.google.com/?q=32.6654,-16.8963', 'https://waze.com/ul?ll=32.6654%2C-16.8963&navigate=yes'],
+      [32.6620, -16.8994, 'Monte Toboggan', 'sight', 'https://maps.google.com/?q=32.6620,-16.8994', 'https://waze.com/ul?ll=32.6620%2C-16.8994&navigate=yes'],
+      [32.6491, -16.9128, "Blandy's Wine Lodge", 'rest', 'https://maps.google.com/?q=32.6491,-16.9128', 'https://waze.com/ul?ll=32.6491%2C-16.9128&navigate=yes'],
+      [32.6616, -16.9358, 'Pico dos Barcelos (захід сонця)', 'view', 'https://maps.google.com/?q=32.6616,-16.9358', 'https://waze.com/ul?ll=32.6616%2C-16.9358&navigate=yes'],
+      // День 3
+      [32.6454, -17.0234, 'Cabo Girão Skywalk', 'sight', 'https://maps.google.com/?q=32.6454,-17.0234', 'https://waze.com/ul?ll=32.6454%2C-17.0234&navigate=yes'],
+      [32.6499, -16.9773, 'Câmara de Lobos', 'sight', 'https://maps.google.com/?q=32.6499,-16.9773', 'https://waze.com/ul?ll=32.6499%2C-16.9773&navigate=yes'],
+      [32.6795, -17.1020, 'Ponta do Sol + пляж', 'beach', 'https://maps.google.com/?q=32.6795,-17.1020', 'https://waze.com/ul?ll=32.6795%2C-17.1020&navigate=yes'],
+      [32.6651, -17.0710, 'Fajã dos Padres', 'sight', 'https://maps.google.com/?q=32.6651,-17.0710', 'https://waze.com/ul?ll=32.6651%2C-17.0710&navigate=yes'],
+      // День 4
+      [32.7468, -17.1680, 'Levada 25 Fontes — старт PR6', 'trek', 'https://maps.google.com/?q=32.7468,-17.1680', 'https://waze.com/ul?ll=32.7468%2C-17.1680&navigate=yes'],
+      [32.7533, -17.1517, 'Paul da Serra — плато 1400м', 'view', 'https://maps.google.com/?q=32.7533,-17.1517', 'https://waze.com/ul?ll=32.7533%2C-17.1517&navigate=yes'],
+      // День 5
+      [32.8630, -17.1654, 'Porto Moniz — лавові басейни', 'sight', 'https://maps.google.com/?q=32.8630,-17.1654', 'https://waze.com/ul?ll=32.8630%2C-17.1654&navigate=yes'],
+      [32.8243, -17.1115, 'Praia de Seixal', 'beach', 'https://maps.google.com/?q=32.8243,-17.1115', 'https://waze.com/ul?ll=32.8243%2C-17.1115&navigate=yes'],
+      [32.8172, -17.0971, 'Véu da Noiva — водоспад', 'sight', 'https://maps.google.com/?q=32.8172,-17.0971', 'https://waze.com/ul?ll=32.8172%2C-17.0971&navigate=yes'],
+      [32.7953, -17.0323, 'São Vicente Caves', 'sight', 'https://maps.google.com/?q=32.7953,-17.0323', 'https://waze.com/ul?ll=32.7953%2C-17.0323&navigate=yes'],
+      // День 6
+      [32.8121, -17.1330, 'Fanal — зачарований ліс', 'sight', 'https://maps.google.com/?q=32.8121,-17.1330', 'https://waze.com/ul?ll=32.8121%2C-17.1330&navigate=yes'],
+      [32.7970, -16.8805, 'Santana — традиційні будиночки', 'sight', 'https://maps.google.com/?q=32.7970,-16.8805', 'https://waze.com/ul?ll=32.7970%2C-16.8805&navigate=yes'],
+      [32.8139, -16.9020, 'Quinta do Furão', 'rest', 'https://maps.google.com/?q=32.8139,-16.9020', 'https://waze.com/ul?ll=32.8139%2C-16.9020&navigate=yes'],
+      [32.7839, -16.8867, 'Queimadas Forest Park', 'sight', 'https://maps.google.com/?q=32.7839,-16.8867', 'https://waze.com/ul?ll=32.7839%2C-16.8867&navigate=yes'],
+      // День 7
+      [32.7388, -16.8997, 'Ribeiro Frio — Levada do Furado', 'trek', 'https://maps.google.com/?q=32.7388,-16.8997', 'https://waze.com/ul?ll=32.7388%2C-16.8997&navigate=yes'],
+      [32.7347, -16.9050, 'Balcões — оглядовий майданчик', 'view', 'https://maps.google.com/?q=32.7347,-16.9050', 'https://waze.com/ul?ll=32.7347%2C-16.9050&navigate=yes'],
+      [32.7584, -16.8428, 'Miradouro da Portela', 'view', 'https://maps.google.com/?q=32.7584,-16.8428', 'https://waze.com/ul?ll=32.7584%2C-16.8428&navigate=yes'],
+      [32.7111, -16.9574, 'Curral das Freiras — Долина Монахинь', 'sight', 'https://maps.google.com/?q=32.7111,-16.9574', 'https://waze.com/ul?ll=32.7111%2C-16.9574&navigate=yes'],
+      // День 8
+      [32.8222, -17.2677, 'Ponta do Pargo — маяк', 'view', 'https://maps.google.com/?q=32.8222,-17.2677', 'https://waze.com/ul?ll=32.8222%2C-17.2677&navigate=yes'],
+      [32.7176, -17.1779, 'Praia de Calheta', 'beach', 'https://maps.google.com/?q=32.7176,-17.1779', 'https://waze.com/ul?ll=32.7176%2C-17.1779&navigate=yes'],
+      // День 9
+      [32.7358, -16.9277, 'Pico do Arieiro — схід сонця', 'trek', 'https://maps.google.com/?q=32.7358,-16.9277', 'https://waze.com/ul?ll=32.7358%2C-16.9277&navigate=yes'],
+      [32.7140, -16.7747, 'Machico', 'sight', 'https://maps.google.com/?q=32.7140,-16.7747', 'https://waze.com/ul?ll=32.7140%2C-16.7747&navigate=yes'],
+      [32.7284, -16.6848, 'Prainha — чорний пісок', 'beach', 'https://maps.google.com/?q=32.7284,-16.6848', 'https://waze.com/ul?ll=32.7284%2C-16.6848&navigate=yes'],
+      // День 10
+      [32.6596, -17.0285, 'Campanário / Calhau da Lapa', 'sight', 'https://maps.google.com/?q=32.6596,-17.0285', 'https://waze.com/ul?ll=32.6596%2C-17.0285&navigate=yes'],
+    ];
+
+    pins.forEach(function(p) {
+      var cfg = cats[p[3]] || cats.sight;
+      var m = L.circleMarker([p[0], p[1]], {
+        radius: cfg.radius,
+        fillColor: cfg.color,
+        color: '#ffffff',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.92
+      }).addTo(leafletMap);
+      var popupHtml = '<b>' + p[2] + '</b>';
+      if (p[4]) {
+        popupHtml += '<div class="popup-links"><a href="' + p[4] + '" target="_blank" class="gm">📍 Maps</a><a href="' + p[5] + '" target="_blank" class="wz">🧭 Waze</a></div>';
+      }
+      m.bindPopup(popupHtml, { maxWidth: 200 });
+    });
+
+    setTimeout(function(){ leafletMap.invalidateSize(); }, 100);
   }
 
   function ct(el) {
