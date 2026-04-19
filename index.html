@@ -708,6 +708,16 @@
   </div>
 
   <div class="pack-card">
+    <h4>Своє</h4>
+    <div class="check-grid" id="custom-list"></div>
+    <div class="custom-add-row">
+      <input type="text" id="custom-input" placeholder="Додати елемент…" maxlength="100"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomItem();}">
+      <button onclick="addCustomItem()">+</button>
+    </div>
+  </div>
+
+  <div class="pack-card">
     <h4>Верхній одяг</h4>
     <div class="check-grid">
       <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Легка пухова куртка (для гір і ранків)</label></div>
@@ -791,16 +801,6 @@
       <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Засіб від нудоти (серпантини!)</label></div>
       <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Крем після сонця</label></div>
       <div class="check-item" onclick="ct(this)"><input type="checkbox"><label>Особисті ліки</label></div>
-    </div>
-  </div>
-
-  <div class="pack-card">
-    <h4>Своє</h4>
-    <div class="check-grid" id="custom-list"></div>
-    <div class="custom-add-row">
-      <input type="text" id="custom-input" placeholder="Додати елемент…" maxlength="100"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomItem();}">
-      <button onclick="addCustomItem()">+</button>
     </div>
   </div>
 </div>
