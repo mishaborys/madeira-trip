@@ -858,24 +858,6 @@
     if (name === 'weather' && !weatherLoaded) { weatherLoaded = true; loadWeather(); }
   }
 
-  // Swipe to change tabs
-  var touchStartX = 0, touchStartY = 0;
-  document.querySelector('.content').addEventListener('touchstart', function(e) {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, {passive: true});
-  document.querySelector('.content').addEventListener('touchend', function(e) {
-    var dx = e.changedTouches[0].clientX - touchStartX;
-    var dy = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-      var idx = tabOrder.indexOf(currentTab);
-      var next = dx < 0 ? Math.min(idx + 1, tabOrder.length - 1) : Math.max(idx - 1, 0);
-      if (next !== idx) {
-        var btn = document.querySelectorAll('.tab-btn')[next];
-        switchTab(tabOrder[next], btn);
-      }
-    }
-  }, {passive: true});
 
   function loadGoogleMaps() {
     if (window.google && window.google.maps) { initGoogleMap(); return; }
@@ -921,7 +903,7 @@
     };
 
     var pins = [
-      [32.6519,-17.0522,'🏠 Ribeira Brava — базовий табір','base','',''],
+      [32.6548,-17.0522,'🏠 Ribeira Brava — базовий табір','base','',''],
       [32.6978,-16.7745,'✈️ Аеропорт Funchal','airport','https://www.google.com/maps/search/?api=1&query=Aeroporto+da+Madeira+Funchal','https://waze.com/ul?q=Aeroporto+da+Madeira+Funchal&navigate=yes'],
       [32.6490,-16.9004,'Mercado dos Lavradores','sight','https://www.google.com/maps/search/?api=1&query=Mercado+dos+Lavradores+Funchal','https://waze.com/ul?q=Mercado+dos+Lavradores+Funchal&navigate=yes'],
       [32.6498,-16.9089,'Sé Cathedral + Rua de Santa Maria','sight','https://www.google.com/maps/search/?api=1&query=Se+Cathedral+Funchal+Madeira','https://waze.com/ul?q=Se+Cathedral+Funchal+Madeira&navigate=yes'],
@@ -932,7 +914,7 @@
       [32.6491,-16.9128,"Blandy's Wine Lodge",'rest','https://www.google.com/maps/search/?api=1&query=Blandy%27s+Wine+Lodge+Funchal','https://waze.com/ul?q=Blandy%27s+Wine+Lodge+Funchal&navigate=yes'],
       [32.6616,-16.9358,'Pico dos Barcelos (захід сонця)','view','https://www.google.com/maps/search/?api=1&query=Pico+dos+Barcelos+Funchal','https://waze.com/ul?q=Pico+dos+Barcelos+Funchal&navigate=yes'],
       [32.6454,-17.0234,'Cabo Girão Skywalk','sight','https://www.google.com/maps/search/?api=1&query=Cabo+Girao+Skywalk+Madeira','https://waze.com/ul?q=Cabo+Girao+Skywalk+Madeira&navigate=yes'],
-      [32.6499,-16.9773,'Câmara de Lobos','sight','https://www.google.com/maps/search/?api=1&query=Camara+de+Lobos+Madeira','https://waze.com/ul?q=Camara+de+Lobos+Madeira&navigate=yes'],
+      [32.6515,-16.9773,'Câmara de Lobos','sight','https://www.google.com/maps/search/?api=1&query=Camara+de+Lobos+Madeira','https://waze.com/ul?q=Camara+de+Lobos+Madeira&navigate=yes'],
       [32.6795,-17.1020,'Ponta do Sol + пляж','beach','https://www.google.com/maps/search/?api=1&query=Praia+de+Ponta+do+Sol+Madeira','https://waze.com/ul?q=Praia+de+Ponta+do+Sol+Madeira&navigate=yes'],
       [32.6651,-17.0710,'Fajã dos Padres','sight','https://www.google.com/maps/search/?api=1&query=Faja+dos+Padres+Madeira','https://waze.com/ul?q=Faja+dos+Padres+Madeira&navigate=yes'],
       [32.7468,-17.1680,'Levada 25 Fontes — старт PR6','trek','https://www.google.com/maps/search/?api=1&query=Rabacal+Madeira+PR6+25+Fontes','https://waze.com/ul?q=Rabacal+Madeira+PR6+25+Fontes&navigate=yes'],
@@ -954,7 +936,7 @@
       [32.7358,-16.9277,'Pico do Arieiro — схід сонця','trek','https://www.google.com/maps/search/?api=1&query=Pico+do+Arieiro+Madeira','https://waze.com/ul?q=Pico+do+Arieiro+Madeira&navigate=yes'],
       [32.7140,-16.7747,'Machico','sight','https://www.google.com/maps/search/?api=1&query=Machico+Madeira','https://waze.com/ul?q=Machico+Madeira&navigate=yes'],
       [32.7284,-16.6848,'Prainha — чорний пісок','beach','https://www.google.com/maps/search/?api=1&query=Prainha+beach+Madeira','https://waze.com/ul?q=Prainha+beach+Madeira&navigate=yes'],
-      [32.6583,-17.0233,'Campanário / Calhau da Lapa','sight','https://www.google.com/maps/search/?api=1&query=Campanario+Calhau+da+Lapa+Madeira','https://waze.com/ul?q=Campanario+Calhau+da+Lapa+Madeira&navigate=yes']
+      [32.6645,-17.0200,'Campanário / Calhau da Lapa','sight','https://www.google.com/maps/search/?api=1&query=Campanario+Calhau+da+Lapa+Madeira','https://waze.com/ul?q=Campanario+Calhau+da+Lapa+Madeira&navigate=yes']
     ];
 
     var infoWindow = new google.maps.InfoWindow();
